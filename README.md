@@ -1,4 +1,4 @@
 # Otus
-спулить исходники
-собрать образ: docker build -t otus .
-запустить группу контейнеров: docker-compose up -d
+1. спулить исходники. 
+2. собрать образ: docker build -t otus .
+3. запустить группу контейнеров: docker-compose up -d
