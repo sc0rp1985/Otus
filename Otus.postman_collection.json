@@ -1,0 +1,86 @@
+{
+	"info": {
+		"_postman_id": "69125458-0993-46fe-9016-fa9c48f3daaa",
+		"name": "Otus",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44218842",
+		"_collection_link": "https://vasya-4471207.postman.co/workspace/869d3ac7-ca02-456a-8710-a4b6cc181cb4/collection/44218842-69125458-0993-46fe-9016-fa9c48f3daaa?action=share&source=collection_link&creator=44218842"
+	},
+	"item": [
+		{
+			"name": "GetById",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:20220/user/get/1",
+					"host": [
+						"localhost"
+					],
+					"port": "20220",
+					"path": [
+						"user",
+						"get",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": \"1\",\r\n  \"password\": \"testpass\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:20220/login",
+					"host": [
+						"localhost"
+					],
+					"port": "20220",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"first_Name\": \"Ivan\",\r\n  \"second_Name\": \"Ivanov\",\r\n  \"birthdate\": \"2025-05-07\",\r\n  \"biography\": \"mkldsflk;dsfmxcv,2[[2=-2=-32\",\r\n  \"city\": \"Moscow\",\r\n  \"password\": \"testtest\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:20220/user/register",
+					"host": [
+						"localhost"
+					],
+					"port": "20220",
+					"path": [
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

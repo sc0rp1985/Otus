@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+
+  otus_soc_net_postgres:
+    container_name: postgresva
+    image: postgres
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+    env_file: .env
+    volumes:
+       - /custom/mount:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+
+  otus_web_api:
+    container_name: otus_web_api
+    image: otus
+    ports:
+      - 20220:80
+    restart: unless-stopped
+
