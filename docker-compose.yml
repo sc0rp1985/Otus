@@ -4,13 +4,16 @@ services:
   otus_soc_net_postgres:
     container_name: postgresva
     image: postgres
+    shm_size: 256mb
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
     env_file: .env
     volumes:
-       - /custom/mount:/var/lib/postgresql/data
+       - postgres:/var/lib/postgresql/data
     ports:
       - 5432:5432
+    command: >
+      postgres -c max_connections=700 -c shared_buffers=512MB
     restart: unless-stopped
 
   otus_web_api:
@@ -19,4 +22,54 @@ services:
     ports:
       - 20220:80
     restart: unless-stopped
+    depends_on:
+      - otus_soc_net_postgres
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/user/search?firstName=test&secondName=test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=k6
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - influxdb
+
+  k6:
+    image: grafana/k6
+    container_name: k6
+    volumes:
+      - ./k6_scripts:/scripts            # скрипты
+      - ./k6_results:/results            # JSON-отчёт
+    entrypoint:
+      - k6
+      - run
+      - --out
+      - influxdb=http://influxdb:8086/k6
+      - --summary-export=/results/results.json
+      - /scripts/search_test.js
+    depends_on:
+      otus_web_api:
+        condition: service_healthy
+      influxdb:
+        condition: service_started
+
+volumes:
+    postgres:
+    influxdb_data:
+    grafana_data:

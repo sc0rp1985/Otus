@@ -21,6 +21,10 @@ RUN dotnet publish -c Release -o /app/publish
 # ===== СТАДИЯ 2: Финальный образ =====
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
+# Установка curl (Debian-based образы используют apt-get)
+RUN apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /app/publish .
 ENV ASPNETCORE_URLS=http://+:80

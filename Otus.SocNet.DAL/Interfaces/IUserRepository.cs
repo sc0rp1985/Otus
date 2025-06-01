@@ -10,5 +10,6 @@ namespace Otus.SocNet.DAL
     {
         Task<User?> GetByIdAsync(int id);       
         Task<int> CreateAsync(User user);
+        Task<IEnumerable<User>> SearchUsers(string firstName, string secondName);
     }
 }

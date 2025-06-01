@@ -2,6 +2,7 @@
 using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,25 @@ namespace Otus.SocNet.DAL
     ";
             var id = await conn.ExecuteScalarAsync<int>(sql, user);
             return id;
+        }
+
+        public async Task<IEnumerable<User>> SearchUsers(string firstName, string secondName)
+        {
+            using var conn = new NpgsqlConnection(_connectionString);
+            var sql = @"
+            SELECT id, first_name, second_name, birthdate, biography, city
+            FROM users
+            WHERE first_name ILIKE @FirstName || '%'
+              AND second_name ILIKE @SecondName || '%'
+            ORDER BY id         
+        "
+            ;
+
+            return await conn.QueryAsync<User>(sql, new
+            {
+                FirstName = firstName,
+                SecondName = secondName
+            });
         }
     }
 }

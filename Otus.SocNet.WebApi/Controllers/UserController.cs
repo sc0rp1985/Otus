@@ -10,9 +10,11 @@ namespace Otus.SocNet.WebApi.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _repo;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(IUserRepository repo)
+        public UserController(ILogger<UserController> logger, IUserRepository repo)
         {
+            _logger = logger;
             _repo = repo;
         }
         [HttpPost("register")]
@@ -49,6 +51,19 @@ namespace Otus.SocNet.WebApi.Controllers
                 Biography = user.Biography,
                 City = user.City,
             });
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string firstName, [FromQuery] string secondName)
+        {
+            _logger.LogInformation($"Search: firstName={firstName}, secondName={secondName}");
+            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(secondName))
+            {
+                return BadRequest("firstName and secondName are required");
+            }
+
+            var users = await _repo.SearchUsers(firstName, secondName);
+            return Ok(users);
         }
     }
 }
