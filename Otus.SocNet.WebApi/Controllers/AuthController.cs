@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Otus.SocNet.DAL;
 using Otus.SocNet.WebApi.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Otus.SocNet.WebApi.Controllers
 {
@@ -11,10 +15,12 @@ namespace Otus.SocNet.WebApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserRepository _repo;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(IUserRepository repo)
+        public AuthController(IUserRepository repo, IConfiguration configuration)
         {
             _repo = repo;
+            _configuration = configuration;
         }
 
         [HttpPost("/login")]
@@ -28,7 +34,24 @@ namespace Otus.SocNet.WebApi.Controllers
                 return Unauthorized();
             }
 
-            return Ok(new { token = "mock-jwt-token" });
+            var claims = new[]
+       {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.First_Name)
+        };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(1),
+                signingCredentials: creds);
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token)
+            });
         }
     }
 }

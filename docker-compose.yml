@@ -30,46 +30,26 @@ services:
       timeout: 5s
       retries: 5
 
-  influxdb:
-    image: influxdb:1.8
-    container_name: influxdb
+  redis:
+    image: redis:7.4-alpine  # Последняя стабильная версия Redis на Alpine (лёгкий образ)
+    container_name: redis
     ports:
-      - "8086:8086"
+      - "6379:6379"  # Пробрасываем порт Redis на хост
+    volumes:
+      - redis_data:/data  # Сохраняем данные Redis на хосте
+    restart: unless-stopped  # Автоматически перезапускать контейнер, если он упал
+    command: redis-server --save 60 1 --loglevel warning  # Периодическое сохранение и уровень логов
+
+  redis-commander:  # Веб-интерфейс для Redis
+    image: rediscommander/redis-commander:latest
+    ports:
+      - "9081:8081"
     environment:
-      - INFLUXDB_DB=k6
-    volumes:
-      - influxdb_data:/var/lib/influxdb
-
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    volumes:
-      - grafana_data:/var/lib/grafana
+      - REDIS_HOSTS=redis
     depends_on:
-      - influxdb
-
-  k6:
-    image: grafana/k6
-    container_name: k6
-    volumes:
-      - ./k6_scripts:/scripts            # скрипты
-      - ./k6_results:/results            # JSON-отчёт
-    entrypoint:
-      - k6
-      - run
-      - --out
-      - influxdb=http://influxdb:8086/k6
-      - --summary-export=/results/results.json
-      - /scripts/search_test.js
-    depends_on:
-      otus_web_api:
-        condition: service_healthy
-      influxdb:
-        condition: service_started
+      - redis
+  
 
 volumes:
     postgres:
-    influxdb_data:
-    grafana_data:
+    redis_data:

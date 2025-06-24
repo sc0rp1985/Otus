@@ -6,6 +6,8 @@ WORKDIR /src
 COPY Otus.SocNet.WebApi.sln .
 COPY Otus.SocNet.WebApi/Otus.SocNet.WebApi.csproj ./Otus.SocNet.WebApi/
 COPY Otus.SocNet.DAL/Otus.SocNet.DAL.csproj ./Otus.SocNet.DAL/
+COPY Otus.SocNet.BLL/Otus.SocNet.BLL.csproj ./Otus.SocNet.BLL/
+COPY Otus.SocNet.xUnit/Otus.SocNet.xUnit.csproj ./Otus.SocNet.xUnit/
 
 # Восстанавливаем зависимости
 RUN dotnet restore Otus.SocNet.WebApi.sln
@@ -13,6 +15,8 @@ RUN dotnet restore Otus.SocNet.WebApi.sln
 # Копируем весь код
 COPY Otus.SocNet.WebApi/ ./Otus.SocNet.WebApi/
 COPY Otus.SocNet.DAL/ ./Otus.SocNet.DAL/
+COPY Otus.SocNet.BLL/ ./Otus.SocNet.BLL/
+COPY Otus.SocNet.xUnit/ ./Otus.SocNet.xUnit/
 
 # Публикуем
 WORKDIR /src/Otus.SocNet.WebApi

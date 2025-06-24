@@ -38,6 +38,7 @@ namespace Otus.SocNet.DAL
             var id = await conn.ExecuteScalarAsync<int>(sql, user);
             return id;
         }
+        
 
         public async Task<IEnumerable<User>> SearchUsers(string firstName, string secondName)
         {

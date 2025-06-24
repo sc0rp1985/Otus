@@ -56,6 +56,19 @@ namespace Otus.SocNet.DAL
         city TEXT NOT NULL,
         password TEXT NOT NULL
     );
+
+CREATE TABLE IF NOT EXISTS friends (
+    user_id INT NOT NULL,
+    friend_id INT NOT NULL,
+    PRIMARY KEY (user_id, friend_id)
+);
+
+CREATE TABLE IF NOT EXISTS posts (
+    id SERIAL PRIMARY KEY,
+    author_id INT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
                 ";
 
                 await conn.ExecuteAsync(createTableSql);
